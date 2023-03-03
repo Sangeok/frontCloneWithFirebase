@@ -5,7 +5,7 @@ import {useState} from "react";
 import Navigation from "./Navigation.js";
 import Profile from "../routes/Profile.js"
 
-function RouterWeb({isLoggedIn}) {
+function RouterWeb({isLoggedIn, userObj}) {
     return (
         <>
             {isLoggedIn && <Navigation />}
@@ -13,7 +13,7 @@ function RouterWeb({isLoggedIn}) {
             {
                 isLoggedIn ? (
                     <>
-                        <Route path="/" element={<Home/>}/>
+                        <Route path="/" element={<Home userObj={userObj}/>}/>
                         <Route path="/profile" element={<Profile/>}/>
                     </>
                 )
