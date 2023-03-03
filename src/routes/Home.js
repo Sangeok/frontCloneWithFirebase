@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import { dbService } from "myBase";
 import { addDoc, collection, getDoc, getDocs, onSnapshot  } from "firebase/firestore";
+import Hweet from "../components/Hweet.js";
 
 function Home({userObj}) {
     const [hweet, setHweet] = useState("");
@@ -58,11 +59,11 @@ function Home({userObj}) {
             </form>
             <div>
                 {hweets.map((hweet)=>(
-                    <div key ={hweet.id}>
-                        <h4>
-                            {hweet.text}
-                        </h4>
-                    </div>
+                    <Hweet 
+                        key={hweet.id} 
+                        hweetObj={hweet} 
+                        isOwner={hweet.creatorId===userObj.uid}
+                    />
                 ))}
             </div>
         </>
