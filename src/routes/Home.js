@@ -4,12 +4,12 @@ import { dbService, storageService } from "myBase";
 import { v4 as uuidv4 } from 'uuid';
 import { addDoc, collection, getDoc, getDocs, onSnapshot  } from "firebase/firestore";
 import Hweet from "../components/Hweet.js";
-import { ref, uploadString } from "firebase/storage";
+import { getDownloadURL, ref, uploadString } from "firebase/storage";
 
 function Home({userObj}) {
     const [hweet, setHweet] = useState("");
     const [hweets, setHweets] = useState([]);
-    const [attachment, setAttachment] = useState();
+    const [attachment, setAttachment] = useState("");
     const dbRef = collection(dbService,"hweets");
 
     useEffect(()=>{
@@ -38,21 +38,24 @@ function Home({userObj}) {
 
     const onSubmit = async (event) => {
         event.preventDefault();
+        let attachmentUrl = "";
         // file Ref
-        const fileRef = ref(storageService, `${userObj.uid}/${uuidv4()}`);
-        const response = await uploadString(fileRef,attachment,"data_url");
-        console.log(response);
-        // try {
-        //     await addDoc(dbRef, {
-        //         text : hweet,
-        //         createAt : Date.now(),
-        //         creatorId : userObj.uid,
-        //     });
-        //     setHweet("");
-        // }
-        // catch(error) {
-        //     alert(error);
-        // }
+        if(attachment !== "") {
+            const fileRef = ref(storageService, `${userObj.uid}/${uuidv4()}`);
+            const response = await uploadString(fileRef,attachment,"data_url");
+            // 파일의 url을 getDownload
+            attachmentUrl = await getDownloadURL(response.ref);
+        }
+        const hweeObj = {
+            text : hweet,
+            createAt : Date.now(),
+            creatorId : userObj.uid,
+            attachmentUrl
+        }
+        const getDoc = await addDoc(dbRef,hweeObj);
+        setHweet("");
+        // img 미리보기 비움
+        setAttachment("");
     };
 
     const onChange = (event) => {
@@ -76,8 +79,9 @@ function Home({userObj}) {
         reader.readAsDataURL(theFile);
     }
     const onClearAttachment = () => {
-        setAttachment(null);
+        setAttachment("");
     }
+
     return (
         <>
             <form onSubmit={onSubmit}>

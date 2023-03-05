@@ -1,8 +1,9 @@
 import {useState} from "react";
-import { dbService } from "myBase";
+import { dbService, storageService } from "myBase";
 import {doc, collection, deleteDoc, updateDoc} from "firebase/firestore";
 import { async } from "@firebase/util";
 import { eventWrapper } from "@testing-library/user-event/dist/utils";
+import { deleteObject,ref } from "firebase/storage";
 
 
 function Hweet({hweetObj, isOwner}) {
@@ -16,6 +17,10 @@ function Hweet({hweetObj, isOwner}) {
         if(ok) {
             // 해당 글 삭제
             await deleteDoc(doc(dbService,"hweets",`${hweetObj.id}`));
+            if(hweetObj.attachmentUrl !== null) {
+                 // image 삭제
+            await deleteObject(ref(storageService, hweetObj.attachmentUrl));
+            }
         }
         else {
             alert("error for deleting the text!!");
@@ -53,6 +58,7 @@ function Hweet({hweetObj, isOwner}) {
                         <h4>
                             {hweetObj.text}
                         </h4>
+                        {hweetObj.attachmentUrl && <img src={hweetObj.attachmentUrl} width="50px" height="50px"/>}
                         {/* 계정 주인 여부에 따라 button 생성 */}
                         {isOwner && (
                         <>
@@ -63,15 +69,6 @@ function Hweet({hweetObj, isOwner}) {
                     </>
                 )
             }
-            {/* <h4>
-                {hweetObj.text}
-            </h4>
-            {isOwner && (
-                <>
-                    <button onClick={onDeleteClick}>Delete hweet</button>
-                    <button onClick={toggleEditing}>Edit hweet</button>
-                </>
-            )} */}
         </div>
     );
 }
