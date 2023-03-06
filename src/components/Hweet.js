@@ -17,9 +17,9 @@ function Hweet({hweetObj, isOwner}) {
         if(ok) {
             // 해당 글 삭제
             await deleteDoc(doc(dbService,"hweets",`${hweetObj.id}`));
-            if(hweetObj.attachmentUrl !== null) {
-                 // image 삭제
-            await deleteObject(ref(storageService, hweetObj.attachmentUrl));
+            if(hweetObj.attachmentUrl !== "") {
+                // image 삭제
+                await deleteObject(ref(storageService, hweetObj.attachmentUrl));
             }
         }
         else {

@@ -5,16 +5,16 @@ import {useState} from "react";
 import Navigation from "./Navigation.js";
 import Profile from "../routes/Profile.js"
 
-function RouterWeb({isLoggedIn, userObj}) {
+function RouterWeb({newName, isLoggedIn, userObj, refreshUser}) {
     return (
         <>
-            {isLoggedIn && <Navigation />}
+            {isLoggedIn && <Navigation userObj={userObj}/>}
             <Routes>
             {
                 isLoggedIn ? (
                     <>
                         <Route path="/" element={<Home userObj={userObj}/>}/>
-                        <Route path="/profile" element={<Profile/>}/>
+                        <Route path="/profile" element={<Profile userObj={userObj} refreshUser={refreshUser}/>}/>
                     </>
                 )
                 : // true는 위 false는 아래 실행(로그인 되었는가 여부)
